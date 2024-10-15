@@ -38,37 +38,42 @@
           <div class="row mb-3">
             <div class="col-md-6 mb-3 mb-md-0">
               <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" 
-              @blur="() => validateName(true)" @input="() => validateName(false)" v-model="formData.username" />
+              <input type="text" class="form-control" id="username" @blur="() => validateName(true)"
+                @input="() => validateName(false)" v-model="formData.username" />
               <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
             </div>
             <div class="col-md-6">
               <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" @blur="() => validatePassword(true)" @input="() => validatePassword(false)"  v-model="formData.password" />
+              <input type="password" class="form-control" id="password" @blur="() => validatePassword(true)"
+                @input="() => validatePassword(false)" v-model="formData.password" />
               <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-6 mb-3 mb-sm-0">
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="isAustralian" @blur="() => validateAustralianResident()" v-model="formData.isAustralian">
-                <label class="form-check-label" for="isAustralian">Australian Resident?</label>
+                <label for="isAustralian" class="form-label">Australian Resident?</label>
+                <select class="form-select" id="isAustralian"  v-model="formData.isAustralian" @change="validateAustralianResident()">
+                  <option value="" disabled selected>Select your response</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
                 <div v-if="errors.isAustralian" class="text-danger">{{ errors.isAustralian }}</div>
-              </div>
             </div>
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Gender</label>
-              <select class="form-select" id="gender" @blur="() => validateGender(true)" @input="() => validateGender(false)" v-model="formData.gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
+            <div class="col-md-6 mb-3 mb-sm-0">
+                <label for="gender" class="form-label">Gender</label>
+                <select class="form-select" id="gender"  v-model="formData.gender" @change="validateGender()">
+                  <option value="" disabled selected>Select your response</option>
+                  <option value="Yes">Male</option>
+                  <option value="No">Female</option>
+                  <option value="other">Other</option>
+                </select>
+                <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
           </div>
           <div class="mb-3">
             <label for="reason" class="form-label">Reason for joining</label>
-            <textarea class="form-control" id="reason" rows="3" @blur="() => validateReason(true)" @input="validateReason(false)" v-model="formData.reason"></textarea>
+            <textarea class="form-control" id="reason" rows="3" @blur="() => validateReason(true)"
+            v-model="formData.reason"></textarea>
             <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
           </div>
           <div class="text-center">
@@ -77,7 +82,7 @@
           </div>
         </form>
         <!-- Activity 6: Display User Information in a Card via Submit Button -->
-        <!-- <div class="row mt-5" v-if="submittedCards.length">
+        <div class="row mt-5" v-if="submittedCards.length">
           <div class="d-flex flex-column flex-sm-row flex-wrap justify-content-center justify-content-sm-start">
             <div v-for="(card, index) in submittedCards" :key="index" class="card m-2" style="width: 18rem;">
               <div class="card-header">
@@ -92,7 +97,7 @@
               </ul>
             </div>
           </div>
-        </div> -->
+        </div>
 
         <!-- PrimeVue DataTable -->
         <DataTable :value="submittedCards" class="mt-4">
@@ -121,7 +126,7 @@ import Column from 'primevue/column';
 const formData = ref({
     username: '',
     password: '',
-    isAustralian: false,
+    isAustralian: '',
     reason: '',
     gender: ''
 });
@@ -139,9 +144,9 @@ const submitForm = () => {
   validateName(true);
   validatePassword(true);
   validateAustralianResident();
-  validateGender(true);
+  validateGender();
   validateReason(true);
-  if (!errors.value.username && !errors.value.password && !errors.value.gender && !errors.value.reason) {
+  if (!errors.value.username && !errors.value.password) {
     submittedCards.value.push({ ...formData.value });
     clearForm();
   }
@@ -151,7 +156,7 @@ const clearForm = () => {
   formData.value = {
     username: '',
     password: '',
-    isAustralian: false,
+    isAustralian: '',
     reason: '',
     gender: ''
   };
@@ -197,12 +202,18 @@ const validatePassword = (blur) => {
 };
 
 const validateAustralianResident = () => {
-  errors.value.isAustralian = null;
+  if(!formData.value.isAustralian){
+    errors.value.isAustralian = "Please select your response";
+  }
+  else{
+    errors.value.isAustralian = null;
+  }
+  
 };
 
-const validateGender = (blur) => {
+const validateGender = () => {
   if (!formData.value.gender) {
-    if (blur) errors.value.gender = "Please select a gender";
+    errors.value.gender = "Please select a gender";
   } else {
     errors.value.gender = null;
   }
