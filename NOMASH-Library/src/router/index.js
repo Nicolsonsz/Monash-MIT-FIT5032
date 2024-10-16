@@ -77,7 +77,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/NOMASH-Library/'),
+  history: createWebHistory(process.env.NODE_ENV === 'production' ? '/Monash-MIT-FIT5032/NOMASH-Library/' : '/'),
   routes
 })
 
